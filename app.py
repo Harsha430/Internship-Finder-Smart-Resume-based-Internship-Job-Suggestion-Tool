@@ -15,7 +15,7 @@ if not os.path.exists('uploads'):
 # Load job listings from CSV
 def load_job_listings():
     """Load job listings from a CSV file."""
-    df = pd.read_csv('job_listings.csv')  # Adjust the path to your CSV file
+    df = pd.read_csv('./job_listings.csv')  # Adjust the path to your CSV file
     return df
 
 # Internship scraping function with error handling
@@ -68,101 +68,58 @@ def get_job_suggestions(skills):
 
     return suggestions[:10]  # Limit to top 10 job suggestions
 
-# Enhanced HTML template with Bootstrap
+# Tailwind CSS-enhanced HTML template
 HTML_TEMPLATE = '''<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Internship Finder</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            padding-top: 50px;
-        }
-        .container {
-            max-width: 900px;
-            margin: auto;
-            background: #ffffff;
-            padding: 30px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
-        h1 {
-            color: #343a40;
-            font-weight: bold;
-            text-align: center;
-        }
-        .internship-list, .job-suggestions {
-            padding: 0;
-            list-style-type: none;
-        }
-        .internship-item, .job-item {
-            background: #17a2b8;
-            color: white;
-            margin: 5px 0;
-            padding: 15px;
-            border-radius: 5px;
-            transition: transform 0.2s;
-        }
-        .internship-item:hover, .job-item:hover {
-            transform: scale(1.02);
-        }
-        a {
-            color: white;
-            text-decoration: none;
-        }
-        .row {
-            margin-top: 20px;
-        }
-        .column {
-            flex: 50%;
-            padding: 10px;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-    <div class="container">
-        <h1>Find Internships Based on Your Resume</h1>
-        <form action="/" method="POST" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="resume">Upload Your Resume (PDF)</label>
-                <input type="file" class="form-control" name="resume" required>
+<body class="bg-gradient-to-r from-blue-500 to-purple-600 min-h-screen flex items-center justify-center p-4">
+    <div class="container mx-auto bg-white p-8 md:p-16 shadow-2xl rounded-lg max-w-3xl">
+        <h1 class="text-4xl font-bold text-center text-gray-800 mb-8">Find Internships Based on Your Resume</h1>
+        <form action="/" method="POST" enctype="multipart/form-data" class="space-y-6">
+            <div>
+                <label for="resume" class="block text-lg font-semibold text-gray-700">Upload Your Resume (PDF)</label>
+                <input type="file" name="resume" class="w-full mt-2 p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400" required>
             </div>
-            <button type="submit" class="btn btn-primary btn-block">Find Internships</button>
+            <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 rounded-lg shadow-lg transition duration-300 transform hover:scale-105">Find Internships</button>
         </form>
-        
+
         {% if internships or job_suggestions %}
-        <div class="row mt-4">
-            <div class="column">
-                <h2 class="text-center">Top Internship Opportunities</h2>
-                <ul class="internship-list">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-10">
+            <div>
+                <h2 class="text-2xl font-semibold text-gray-800 text-center mb-4">Top Internship Opportunities</h2>
+                <ul class="space-y-4">
                     {% for internship in internships %}
-                    <li class="internship-item">
-                        <strong>{{ internship.title }}</strong> at {{ internship.company }}<br>
-                        <a href="{{ internship.link }}" target="_blank">View Details</a>
+                    <li class="bg-blue-500 text-white p-4 rounded-lg shadow-lg transition duration-300 transform hover:scale-105">
+                        <div>
+                            <strong class="text-lg">{{ internship.title }}</strong>
+                            {% if internship.company != "N/A" %}
+                                <span class="block text-sm">at {{ internship.company }}</span>
+                            {% endif %}
+                        </div>
+                        <a href="{{ internship.link }}" target="_blank" class="text-blue-200 underline mt-2 block">View Details</a>
                     </li>
                     {% endfor %}
                 </ul>
             </div>
-            <div class="column">
-                <h2 class="text-center">Job Suggestions</h2>
-                <ul class="job-suggestions">
+            <div>
+                <h2 class="text-2xl font-semibold text-gray-800 text-center mb-4">Job Suggestions</h2>
+                <ul class="space-y-4">
                     {% for job in job_suggestions %}
-                    <li class="job-item">
-                        <strong>{{ job }}</strong> <!-- Correctly display job titles -->
+                    <li class="bg-green-500 text-white p-4 rounded-lg shadow-lg transition duration-300 transform hover:scale-105">
+                        <strong class="text-lg">{{ job }}</strong>
                     </li>
                     {% endfor %}
                 </ul>
             </div>
         </div>
-        <a href="/" class="btn btn-secondary btn-block mt-3">Try Again</a>
+        <a href="/" class="mt-8 block text-center bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 rounded-lg transition duration-300">Try Again</a>
         {% endif %}
     </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>'''
 
